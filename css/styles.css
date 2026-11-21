@@ -359,6 +359,8 @@ body::after {
 /* ---------- footer ---------- */
 .footer { text-align: center; padding: 40px 7vw; border-top: 1px solid var(--border); color: var(--muted); }
 .footer .muted { font-size: 0.85rem; opacity: 0.75; margin-top: 6px; }
+.visit { font-size: 0.85rem; margin-top: 6px; }
+.visit time { color: var(--accent2); font-weight: 600; font-variant-numeric: tabular-nums; }
 
 /* ---------- hover lift, only on devices with a real pointer ---------- */
 /* on phones a tap triggers :hover and leaves the card stuck in its lifted state */

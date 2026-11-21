@@ -365,5 +365,20 @@ form.addEventListener("submit", (e) => {
   form.reset();
 });
 
+// ===== visit timer: time on the site this session, kept across reloads in sessionStorage =====
+const visitTimer = document.getElementById("visitTimer");
+const visitStart = Number(sessionStorage.getItem("visitStart")) || Date.now();
+sessionStorage.setItem("visitStart", String(visitStart));
+
+function updateVisitTimer() {
+  const seconds = Math.floor((Date.now() - visitStart) / 1000);
+  const mm = String(Math.floor(seconds / 60)).padStart(2, "0");
+  const ss = String(seconds % 60).padStart(2, "0");
+  visitTimer.textContent = `${mm}:${ss}`;
+  visitTimer.setAttribute("datetime", `PT${seconds}S`);
+}
+updateVisitTimer();
+setInterval(updateVisitTimer, 1000);
+
 // ===== footer year =====
 document.getElementById("year").textContent = new Date().getFullYear();
