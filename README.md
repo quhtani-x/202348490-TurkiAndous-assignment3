@@ -1,76 +1,68 @@
 # Turki Andous — Portfolio (Assignment 3)
 
-SWE363 Assignment 3: Advanced Functionality. (Work in progress — this starts from the Assignment 2 portfolio.)
+SWE363 Assignment 3: Advanced Functionality.
 
-This is my portfolio from Assignment 1 with more interactivity added on top. It is still plain HTML, CSS and JavaScript with no frameworks, no libraries and no build step.
+My portfolio from Assignment 2 with more advanced features on top: sorting, a level selector, saved visitor state, a visit timer, a cached GitHub feed and a performance pass. It is still plain HTML, CSS and JavaScript with no frameworks, no libraries and no build step.
 
 | | |
 | --- | --- |
 | **Student** | Turki Andous, s202348490 |
 | **Course** | SWE363 Web Engineering & Development, KFUPM |
-| **Assignment 1** | <https://github.com/quhtani-x/s202348490-TurkiAndous-assignment1> |
+| **Live site** | <https://quhtani-x.github.io/202348490-TurkiAndous-assignment3/> |
+| **Repository** | <https://github.com/quhtani-x/202348490-TurkiAndous-assignment3> |
+| **Assignment 2** | <https://github.com/quhtani-x/202348490-TurkiAndous-assignment2> |
 
-## What's new since Assignment 1
+## What's new in Assignment 3
 
-**Project search.** There is a search box above the projects. It filters as you type and works together with the category buttons (All, AI & Autonomy, Web & Full-stack), so you can pick "AI & Autonomy" and then search "drone". A counter shows how many projects match, for example "Showing 2 of 7 projects". If nothing matches, the page tells you what you searched for and gives you a button that clears the search and the filter.
+**Sorting.** A "Sort" menu above the projects orders them by newest first, oldest first, or A–Z. Each card has a `data-date` and shows its month in the tag line. Sorting works together with the category filter, the level selector and the search box.
 
-**Live GitHub repos.** Under the projects there is a "Latest on GitHub" section that loads my six most recently updated public repositories (forks are skipped) from the GitHub API. Each card shows the description, language, stars and last update date. A spinner shows while it loads. If GitHub can't be reached, or the hourly request limit is hit, it says so in plain words and shows a "Try again" button.
+**Level selector.** Buttons for All, Beginner, Intermediate and Advanced show only the projects at that level (each card has a `data-level`). Each level has its own short intro message above the filters.
 
-**Animations.** Project cards fade back in when a filter or search brings them back, the repo cards fade in one after another, invalid form fields shake when you submit, and the success message slides in.
+**Visit timer.** The footer shows how long you have been on the site this visit, in mm:ss. It keeps counting across reloads in the same tab and starts again in a new tab.
 
-**Style pass.** I cleaned up the stylesheet:
-- Corner sizes and animation speeds are now shared values at the top of `css/styles.css`, so every card uses the same radius and timing.
-- Keyboard users get a visible focus ring on the search box and form fields.
-- Cards only lift on hover on devices with a mouse, so they don't get stuck lifted after a tap on a phone.
-- Project cards glow and their image zooms slightly on hover.
-- The page dims behind the open mobile menu.
-- The "reduce motion" setting now turns off every animation, not just some.
+**Remembers you.**
+- A small "What should I call you?" form in the hero. After you save a name the greeting says, for example, "Good evening, Sara — I'm". The name is kept in `localStorage`, and you can change it or press **Forget me** to delete it.
+- The Skills, Experience and "Latest on GitHub" sections have show/hide buttons. The site remembers which ones you closed.
+- Your last sort, category and level are restored when you come back.
 
-**Content.** I added my role as Chief Aeronautics & Propulsion Engineer on the AIAA Design/Build/Fly team at KFUPM.
+**GitHub feed.** The "Latest on GitHub" list still has its loading, empty, error and "Try again" states. The result is now cached in `sessionStorage` for 10 minutes, so reloading the page doesn't use up GitHub's 60-requests-an-hour limit. If the section is hidden, nothing is requested until you open it.
 
-### Still there from Assignment 1
+**Performance.**
+- The Google Fonts stylesheet no longer blocks the first paint.
+- The hero portrait is loaded first, and the images further down load lazily. Every image has a width and height.
+- I merged repeated CSS and JS.
+- I fixed a footer colour-contrast problem.
 
-- dark/light theme toggle: it follows your system setting on the first visit and remembers your choice in `localStorage`
-- greeting that changes with the time of day (morning, afternoon, evening)
-- typing animation that cycles through what I build in the hero
-- navigation that highlights the section you are reading, and a slide-out menu on phones and tablets (closes with <kbd>Esc</kbd>)
-- stats that count up when they scroll into view, and sections that fade in on scroll
-- contact form validation with inline error messages (front-end only, nothing is actually sent)
-- a "skip to content" link for keyboard users
+Lighthouse scores are in the technical documentation.
+
+### Still there from Assignments 1 and 2
+
+- dark/light theme toggle: it follows your system setting on the first visit and remembers your choice
+- category filter (All, AI & Autonomy, Web & Full-stack) and live search over the project cards, with a result count and an empty state that has a reset button
+- time-of-day greeting and the typing animation in the hero
+- navigation that highlights the current section, and a slide-out menu on phones and tablets (closes with <kbd>Esc</kbd>)
+- stats that count up, sections that fade in on scroll
+- contact form validation with inline errors (front-end only, nothing is sent)
+- a "skip to content" link, visible focus rings, and full support for the "reduce motion" setting
 
 ## Running it locally
 
-Clone the repo:
-
 ```bash
-git clone https://github.com/quhtani-x/202348490-TurkiAndous-assignment2.git
-```
-
-```bash
-cd 202348490-TurkiAndous-assignment2
-```
-
-Then start a small local server. That way the GitHub fetch behaves the same as it does online:
-
-```bash
+git clone https://github.com/quhtani-x/202348490-TurkiAndous-assignment3.git
+cd 202348490-TurkiAndous-assignment3
 python3 -m http.server 8000
 ```
 
-Open <http://localhost:8000>.
-
-Opening `index.html` directly by double-clicking also works. VS Code's Live Server extension is fine too. There is nothing to install.
-
-You need an internet connection for the "Latest on GitHub" section and the fonts. Everything else works offline.
+Open <http://localhost:8000>. There is nothing to install. VS Code's Live Server works too. You need an internet connection for the GitHub list and the fonts. Everything else works offline.
 
 ### Trying the new features
 
-1. Go to **Projects** and type `flask` in the search box. Two projects should stay, and the counter says "Showing 2 of 7 projects".
-2. Click **AI & Autonomy** while `flask` is still typed. Nothing matches, so the empty message and reset button appear.
-3. Press the reset button, then click **AI & Autonomy** and type `drone`. One project stays.
-4. Scroll a bit further to see the GitHub repos load.
-5. To see the error message, turn off your Wi-Fi and reload the page. Then turn it back on and press **Try again**.
-6. In **Contact**, press **Send message** with the form empty to see the errors and the shake.
-7. Press <kbd>Tab</kbd> to move through the page and see the focus rings.
+1. **Projects:** pick **Advanced**, then **AI & Autonomy**. Only *F1 Active Aero* is left. Change **Sort** to A–Z or Oldest first and watch the order change.
+2. Reload the page. The level, category and sort you chose are still selected.
+3. **Hero:** type your name and press **Save**. The greeting uses it. Reload, then try **Change name** and **Forget me**.
+4. Press **Hide skills** (or Hide experience / Hide repositories) and reload. The section stays hidden until you press **Show**.
+5. **Footer:** watch the visit timer. It keeps counting after a reload.
+6. **GitHub error:** in DevTools → Network, choose "Offline" and run `sessionStorage.clear()` in the console (to skip the cache). Then reload. You'll see the error message and **Try again**. Go back online and press it.
 
 ## Folder structure
 
@@ -88,12 +80,12 @@ You need an internet connection for the "Latest on GitHub" section and the fonts
     └── technical-documentation.md
 ```
 
-How each feature works, the error states and the testing I did are in [`docs/technical-documentation.md`](docs/technical-documentation.md).
+How each feature works, the saved-state keys, the API error handling and the performance results are in [`docs/technical-documentation.md`](docs/technical-documentation.md).
 
 ## AI use
 
-I used Claude (Anthropic) through Claude Code for this assignment. Claude added animations, helped with the wording of my content, did a CSS style pass that fixed some styling glitches, and drafted this README and the docs. I reviewed and tested everything before submitting, and changed what didn't match my site or my style. The full declaration and usage log are in [`docs/ai-usage-report.md`](docs/ai-usage-report.md).
+How AI tools were used in this assignment is documented in [`docs/ai-usage-report.md`](docs/ai-usage-report.md).
 
 ## Deployment
 
-The site is static, so GitHub Pages works. Go to **Settings → Pages**, set the source to `main` / root, and save. It will be at `https://quhtani-x.github.io/202348490-TurkiAndous-assignment2/`.
+The site is deployed with GitHub Pages from the `main` branch (root folder): <https://quhtani-x.github.io/202348490-TurkiAndous-assignment3/>
