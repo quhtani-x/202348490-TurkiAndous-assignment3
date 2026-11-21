@@ -134,9 +134,13 @@ const nav = document.getElementById("nav");
 const navLinks = document.getElementById("navLinks");
 const burger = document.getElementById("burger");
 
-window.addEventListener("scroll", () => {
-  nav.classList.toggle("scrolled", window.scrollY > 40);
-});
+window.addEventListener(
+  "scroll",
+  () => {
+    nav.classList.toggle("scrolled", window.scrollY > 40);
+  },
+  { passive: true }
+);
 
 function closeMenu() {
   navLinks.classList.remove("open");
@@ -298,19 +302,20 @@ function updateProjects() {
   projEmpty.hidden = visible > 0;
 }
 
-filters.addEventListener("click", (e) => {
-  const button = e.target.closest(".filter");
-  if (!button) return;
-  setCategory(button.dataset.filter);
-  updateProjects();
-});
+// one delegated listener per button group instead of one per button
+function onGroupClick(group, handle) {
+  group.addEventListener("click", (e) => {
+    const button = e.target.closest(".filter");
+    if (!button) return;
+    handle(button);
+    updateProjects();
+  });
+}
 
-levels.addEventListener("click", (e) => {
-  const button = e.target.closest(".filter");
-  if (!button) return;
+onGroupClick(filters, (button) => setCategory(button.dataset.filter));
+onGroupClick(levels, (button) => {
   setLevel(button.dataset.level);
   replayAnimation(levelIntro, "show");
-  updateProjects();
 });
 
 projSearch.addEventListener("input", updateProjects);
@@ -377,7 +382,7 @@ function setGhStatus(text, type = "") {
   ghStatus.className = `gh-status ${type}`.trim();
 }
 
-function repoCard(repo) {
+function repoCard(repo, index) {
   const link = document.createElement("a");
   link.href = repo.html_url;
   link.target = "_blank";
@@ -402,6 +407,7 @@ function repoCard(repo) {
 
   link.append(name, desc, meta);
   const li = document.createElement("li");
+  li.style.setProperty("--i", index);
   li.append(link);
   return li;
 }
@@ -465,7 +471,7 @@ async function loadRepos() {
       return;
     }
 
-    repos.forEach((repo) => ghList.append(repoCard(repo)));
+    ghList.append(...repos.map(repoCard));
     setGhStatus("");
   } catch (err) {
     const offline = err instanceof TypeError;

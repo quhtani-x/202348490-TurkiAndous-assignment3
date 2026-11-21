@@ -11,7 +11,10 @@
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90' font-family='sans-serif' font-weight='700' fill='%237c6cff'>T</text></svg>" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+  <!-- fonts load without blocking the first paint; the system font shows until they arrive -->
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" as="style" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" media="print" onload="this.media='all'" />
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" /></noscript>
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
@@ -88,7 +91,7 @@
 
         <div class="hero-photo reveal">
           <div class="photo-ring">
-            <img src="assets/images/profile.jpg" alt="Portrait of Turki Andous" width="600" height="900" />
+            <img src="assets/images/profile.jpg" alt="Portrait of Turki Andous" width="600" height="900" fetchpriority="high" />
           </div>
         </div>
       </div>
@@ -106,7 +109,7 @@
     <section class="section" id="about">
       <div class="about-grid">
         <div class="about-photo reveal">
-          <img src="assets/images/profile.jpg" alt="Turki Andous" width="600" height="900" loading="lazy" />
+          <img src="assets/images/profile.jpg" alt="Turki Andous" width="600" height="900" loading="lazy" decoding="async" />
         </div>
         <div class="about-text reveal">
           <p class="kicker">About me</p>
@@ -211,7 +214,7 @@
 
       <div class="proj-grid" id="projGrid">
         <article class="pcard featured reveal" data-category="web" data-date="2026-09" data-level="advanced">
-          <img class="pthumb" src="assets/images/projects/petroly-aio.svg" alt="Illustration of a campus map with a walking route between buildings" width="800" height="500" loading="lazy" />
+          <img class="pthumb" src="assets/images/projects/petroly-aio.svg" alt="Illustration of a campus map with a walking route between buildings" width="800" height="500" loading="lazy" decoding="async" />
           <div class="pbody">
             <p class="ptag">Campus platform · Full-stack · <time datetime="2026-09">Sep 2026</time></p>
             <h3>Petroly AIO <span class="pnote">— formerly KFUPM Navigator</span></h3>
@@ -222,7 +225,7 @@
         </article>
 
         <article class="pcard reveal" data-category="ai" data-date="2026-05" data-level="advanced">
-          <img class="pthumb" src="assets/images/projects/f1-active-aero.svg" alt="Illustration of an adaptive F1 rear wing" width="800" height="500" loading="lazy" />
+          <img class="pthumb" src="assets/images/projects/f1-active-aero.svg" alt="Illustration of an adaptive F1 rear wing" width="800" height="500" loading="lazy" decoding="async" />
           <div class="pbody">
             <p class="ptag">Autonomous · Motorsport · <time datetime="2026-05">May 2026</time></p>
             <h3>F1 Active Aero — AI Wing Control</h3>
@@ -233,7 +236,7 @@
         </article>
 
         <article class="pcard reveal" data-category="ai" data-date="2026-02" data-level="intermediate">
-          <img class="pthumb" src="assets/images/projects/uav-swarm.svg" alt="Illustration of drones flying in formation" width="800" height="500" loading="lazy" />
+          <img class="pthumb" src="assets/images/projects/uav-swarm.svg" alt="Illustration of drones flying in formation" width="800" height="500" loading="lazy" decoding="async" />
           <div class="pbody">
             <p class="ptag">Swarm robotics · <time datetime="2026-02">Feb 2026</time></p>
             <h3>UAV Swarm Formation</h3>
@@ -244,7 +247,7 @@
         </article>
 
         <article class="pcard reveal" data-category="ai" data-date="2025-10" data-level="intermediate">
-          <img class="pthumb" src="assets/images/projects/natural-selection.svg" alt="Illustration of a neural network graph" width="800" height="500" loading="lazy" />
+          <img class="pthumb" src="assets/images/projects/natural-selection.svg" alt="Illustration of a neural network graph" width="800" height="500" loading="lazy" decoding="async" />
           <div class="pbody">
             <p class="ptag">AI · Artificial life · <time datetime="2025-10">Oct 2025</time></p>
             <h3>Natural Selection — Neural Evolution</h3>
@@ -255,7 +258,7 @@
         </article>
 
         <article class="pcard reveal" data-category="web" data-date="2025-02" data-level="intermediate">
-          <img class="pthumb" src="assets/images/projects/bender-3d.svg" alt="Illustration of a 3D wireframe cube" width="800" height="500" loading="lazy" />
+          <img class="pthumb" src="assets/images/projects/bender-3d.svg" alt="Illustration of a 3D wireframe cube" width="800" height="500" loading="lazy" decoding="async" />
           <div class="pbody">
             <p class="ptag">Graphics · Web · <time datetime="2025-02">Feb 2025</time></p>
             <h3>Bender — Browser 3D Editor</h3>
@@ -266,7 +269,7 @@
         </article>
 
         <article class="pcard reveal" data-category="web" data-date="2025-05" data-level="advanced">
-          <img class="pthumb" src="assets/images/projects/thaka-ai.svg" alt="Illustration of a video lecture player" width="800" height="500" loading="lazy" />
+          <img class="pthumb" src="assets/images/projects/thaka-ai.svg" alt="Illustration of a video lecture player" width="800" height="500" loading="lazy" decoding="async" />
           <div class="pbody">
             <p class="ptag">Startup · Full-stack AI · <time datetime="2025-05">May 2025</time></p>
             <h3>Thaka — AI Lectures for Students</h3>
@@ -277,7 +280,7 @@
         </article>
 
         <article class="pcard reveal" data-category="web" data-date="2024-11" data-level="beginner">
-          <img class="pthumb" src="assets/images/projects/banking-system.svg" alt="Illustration of a bank and transaction chart" width="800" height="500" loading="lazy" />
+          <img class="pthumb" src="assets/images/projects/banking-system.svg" alt="Illustration of a bank and transaction chart" width="800" height="500" loading="lazy" decoding="async" />
           <div class="pbody">
             <p class="ptag">Full-stack · Backend · <time datetime="2024-11">Nov 2024</time></p>
             <h3>Banking System</h3>

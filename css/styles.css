@@ -109,6 +109,11 @@ ul, ol { list-style: none; }
   border: 1px solid var(--border);
 }
 
+/* the cards that lift on hover share one transition */
+.pcard, .gh-list a, .contact-cards a {
+  transition: transform var(--slow) var(--ease), border-color var(--slow), background-color var(--slow), box-shadow var(--slow);
+}
+
 /* inputs get a soft ring instead of the default outline, but only from the keyboard or while typing */
 .search input:focus-visible, .sort select:focus-visible, .visitor input:focus-visible, .field input:focus-visible, .field textarea:focus-visible {
   outline: none; border-color: var(--accent2); box-shadow: var(--focus-ring);
@@ -297,7 +302,6 @@ body::after {
 .proj-grid { display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-flow: dense; gap: 22px; }
 .pcard {
   display: flex; flex-direction: column; overflow: hidden; border-radius: var(--radius-lg);
-  transition: transform var(--slow) var(--ease), border-color var(--slow), background-color var(--slow), box-shadow var(--slow);
 }
 .pcard:hover { border-color: var(--accent); background: var(--card-hover); }
 .pcard[hidden] { display: none; }
@@ -336,7 +340,6 @@ body::after {
 .gh-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 24px; text-align: left; }
 .gh-list a {
   display: flex; flex-direction: column; gap: 8px; height: 100%; padding: 18px 20px; border-radius: var(--radius-md);
-  transition: transform var(--slow) var(--ease), border-color var(--slow), background-color var(--slow), box-shadow var(--slow);
 }
 .gh-list a:hover { border-color: var(--accent2); background: var(--card-hover); }
 .gh-list b { font-family: "Space Grotesk", sans-serif; font-size: 1.02rem; word-break: break-word; }
@@ -375,7 +378,6 @@ body::after {
 .contact-cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
 .contact-cards a {
   display: block; height: 100%; padding: 24px; text-align: center; border-radius: var(--radius-lg);
-  transition: transform var(--slow) var(--ease), border-color var(--slow), background-color var(--slow), box-shadow var(--slow);
 }
 .contact-cards a:hover { border-color: var(--accent); background: var(--card-hover); }
 .contact-cards span { font-size: 1.7rem; }
@@ -384,7 +386,7 @@ body::after {
 
 /* ---------- footer ---------- */
 .footer { text-align: center; padding: 40px 7vw; border-top: 1px solid var(--border); color: var(--muted); }
-.footer .muted { font-size: 0.85rem; opacity: 0.75; margin-top: 6px; }
+.footer .muted { font-size: 0.85rem; margin-top: 6px; }
 .visit { font-size: 0.85rem; margin-top: 6px; }
 .visit time { color: var(--accent2); font-weight: 600; font-variant-numeric: tabular-nums; }
 
@@ -405,12 +407,8 @@ body::after {
 
 /* ---------- small motion helpers ---------- */
 .pop, .reveal.pop { animation: fade-up 0.35s var(--ease); }
-.gh-list li { animation: fade-up 0.4s var(--ease) both; }
-.gh-list li:nth-child(2) { animation-delay: 0.06s; }
-.gh-list li:nth-child(3) { animation-delay: 0.12s; }
-.gh-list li:nth-child(4) { animation-delay: 0.18s; }
-.gh-list li:nth-child(5) { animation-delay: 0.24s; }
-.gh-list li:nth-child(6) { animation-delay: 0.3s; }
+/* each repo card gets its position as --i from the script, so the stagger works for any count */
+.gh-list li { animation: fade-up 0.4s var(--ease) both; animation-delay: calc(var(--i, 0) * 60ms); }
 @keyframes fade-up { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
 @keyframes slide-in { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
 @keyframes shake { 25% { transform: translateX(-5px); } 50% { transform: translateX(5px); } 75% { transform: translateX(-3px); } }
