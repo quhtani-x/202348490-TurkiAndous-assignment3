@@ -1,37 +1,43 @@
 /* Portfolio interactions — plain JavaScript, no dependencies. */
 
+const $ = (id) => document.getElementById(id);
+
 // ===== saved state =====
-// localStorage can throw (storage disabled, some private modes), so every read and write goes
-// through this wrapper and the page simply forgets instead of breaking.
-const store = {
-  get(key, fallback = null) {
+// Web Storage can throw (storage disabled, some private modes, quota full), so every read and
+// write goes through this wrapper and the page simply forgets instead of breaking.
+// One factory serves both localStorage and sessionStorage.
+function makeStore(type) {
+  const attempt = (fn, fallback) => {
     try {
-      const value = localStorage.getItem(key);
-      return value === null ? fallback : value;
+      return fn(window[type]);
     } catch {
       return fallback;
     }
-  },
-  set(key, value) {
-    try {
-      localStorage.setItem(key, value);
-    } catch {
-      /* not saved, nothing else to do */
-    }
-  },
-  remove(key) {
-    try {
-      localStorage.removeItem(key);
-    } catch {
-      /* nothing to remove */
-    }
-  },
-};
+  };
+  return {
+    get: (key, fallback = null) => attempt((s) => s.getItem(key) ?? fallback, fallback),
+    set: (key, value) => attempt((s) => s.setItem(key, value)),
+    remove: (key) => attempt((s) => s.removeItem(key)),
+    // JSON values: anything missing or damaged comes back as the fallback
+    getJSON: (key, fallback) => attempt((s) => JSON.parse(s.getItem(key)) ?? fallback, fallback),
+  };
+}
+const store = makeStore("localStorage");
+const session = makeStore("sessionStorage");
 
-// ===== theme toggle (saved in localStorage, falls back to the OS setting) =====
+// restart a CSS animation class even if it is already on the element
+function replayAnimation(el, className) {
+  el.classList.remove(className);
+  void el.offsetWidth;
+  el.classList.add(className);
+}
+
+// ===== theme toggle =====
+// The inline script in <head> already picked the theme before the first paint (saved choice,
+// then the OS setting), so here we only sync the button with it.
 const root = document.documentElement;
-const themeToggle = document.getElementById("themeToggle");
-const themeIcon = document.getElementById("themeIcon");
+const themeToggle = $("themeToggle");
+const themeIcon = $("themeIcon");
 
 function applyTheme(theme) {
   root.dataset.theme = theme;
@@ -41,9 +47,7 @@ function applyTheme(theme) {
   themeToggle.setAttribute("aria-label", isLight ? "Switch to dark theme" : "Switch to light theme");
 }
 
-const savedTheme = store.get("theme");
-const prefersLight = window.matchMedia("(prefers-color-scheme: light)").matches;
-applyTheme(savedTheme || (prefersLight ? "light" : "dark"));
+applyTheme(root.dataset.theme === "light" ? "light" : "dark");
 
 themeToggle.addEventListener("click", () => {
   const next = root.dataset.theme === "light" ? "dark" : "light";
@@ -52,11 +56,11 @@ themeToggle.addEventListener("click", () => {
 });
 
 // ===== greeting: local time of day, plus the visitor's name once they share it =====
-const greetingEl = document.getElementById("greeting");
-const visitorForm = document.getElementById("visitorForm");
-const visitorInput = document.getElementById("visitorName");
-const visitorError = document.getElementById("visitorError");
-const visitorSaved = document.getElementById("visitorSaved");
+const greetingEl = $("greeting");
+const visitorForm = $("visitorForm");
+const visitorInput = $("visitorName");
+const visitorError = $("visitorError");
+const visitorSaved = $("visitorSaved");
 const hour = new Date().getHours();
 const timeGreeting = hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
 
@@ -66,8 +70,8 @@ function renderVisitor(justSaved = false) {
   visitorForm.hidden = Boolean(name);
   visitorSaved.hidden = !name;
   if (name) {
-    document.getElementById("visitorShown").textContent = name;
-    document.getElementById("visitorHello").textContent = justSaved ? "Nice to meet you" : "Welcome back";
+    $("visitorShown").textContent = name;
+    $("visitorHello").textContent = justSaved ? "Nice to meet you" : "Welcome back";
   }
 }
 
@@ -84,10 +88,10 @@ visitorForm.addEventListener("submit", (e) => {
   visitorError.textContent = "";
   store.set("visitorName", name);
   renderVisitor(true);
-  document.getElementById("visitorChange").focus();
+  $("visitorChange").focus();
 });
 
-document.getElementById("visitorChange").addEventListener("click", () => {
+$("visitorChange").addEventListener("click", () => {
   visitorInput.value = store.get("visitorName", "");
   visitorSaved.hidden = true;
   visitorForm.hidden = false;
@@ -95,7 +99,7 @@ document.getElementById("visitorChange").addEventListener("click", () => {
   visitorInput.select();
 });
 
-document.getElementById("visitorForget").addEventListener("click", () => {
+$("visitorForget").addEventListener("click", () => {
   store.remove("visitorName");
   visitorInput.value = "";
   renderVisitor();
@@ -106,70 +110,65 @@ renderVisitor();
 
 // ===== typed rotating roles in the hero =====
 const roles = ["autonomous systems", "AI that ships", "drone tech", "scalable platforms", "embedded systems"];
-const roleEl = document.getElementById("roleText");
+const roleEl = $("roleText");
+// the HTML already shows the first role, so the loop starts by pausing on it, then deleting
 let roleIndex = 0;
-let charIndex = 0;
-let deleting = false;
+let charIndex = roles[0].length;
+let deleting = true;
 
 function typeLoop() {
   const word = roles[roleIndex];
-  roleEl.textContent = deleting ? word.slice(0, charIndex--) : word.slice(0, charIndex++);
+  charIndex += deleting ? -1 : 1;
+  roleEl.textContent = word.slice(0, charIndex);
 
-  // pause on the complete word before deleting it
-  if (!deleting && charIndex === word.length + 1) {
+  let delay = deleting ? 45 : 85;
+  if (!deleting && charIndex === word.length) {
     deleting = true;
-    setTimeout(typeLoop, 1400);
-    return;
-  }
-  if (deleting && charIndex === 0) {
+    delay = 1400; // pause on the complete word before deleting it
+  } else if (deleting && charIndex === 0) {
     deleting = false;
     roleIndex = (roleIndex + 1) % roles.length;
   }
-  setTimeout(typeLoop, deleting ? 45 : 85);
+  setTimeout(typeLoop, delay);
 }
-typeLoop();
+setTimeout(typeLoop, 1400);
 
 // ===== navigation: scrolled state, mobile menu, active link =====
-const nav = document.getElementById("nav");
-const navLinks = document.getElementById("navLinks");
-const burger = document.getElementById("burger");
+const nav = $("nav");
+const navLinks = $("navLinks");
+const burger = $("burger");
 
-window.addEventListener(
-  "scroll",
-  () => {
-    nav.classList.toggle("scrolled", window.scrollY > 40);
-  },
-  { passive: true }
-);
+const navAnchors = [...navLinks.querySelectorAll("a")];
 
-function closeMenu() {
-  navLinks.classList.remove("open");
-  burger.classList.remove("open");
-  burger.setAttribute("aria-expanded", "false");
-  burger.setAttribute("aria-label", "Open menu");
-}
+const updateNavBg = () => nav.classList.toggle("scrolled", window.scrollY > 40);
+window.addEventListener("scroll", updateNavBg, { passive: true });
+updateNavBg(); // the browser may restore a scrolled position on reload
 
-burger.addEventListener("click", () => {
-  const open = navLinks.classList.toggle("open");
+function setMenu(open) {
+  navLinks.classList.toggle("open", open);
   burger.classList.toggle("open", open);
   burger.setAttribute("aria-expanded", String(open));
   burger.setAttribute("aria-label", open ? "Close menu" : "Open menu");
-});
+}
 
-navLinks.querySelectorAll("a").forEach((link) => link.addEventListener("click", closeMenu));
+burger.addEventListener("click", () => setMenu(!navLinks.classList.contains("open")));
+navLinks.addEventListener("click", (e) => {
+  if (e.target.closest("a")) setMenu(false);
+});
 document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") closeMenu();
+  if (e.key !== "Escape" || !navLinks.classList.contains("open")) return;
+  setMenu(false);
+  burger.focus();
 });
 
 // highlight the nav link of whichever section is in the middle of the viewport
+// (sections without a link, like the hero, clear the highlight)
 const navObserver = new IntersectionObserver(
   (entries) => {
     entries.forEach((entry) => {
       if (!entry.isIntersecting) return;
-      const link = navLinks.querySelector(`a[href="#${entry.target.id}"]`);
-      if (!link) return;
-      navLinks.querySelectorAll("a").forEach((a) => a.classList.remove("active"));
-      link.classList.add("active");
+      const href = `#${entry.target.id}`;
+      navAnchors.forEach((a) => a.classList.toggle("active", a.getAttribute("href") === href));
     });
   },
   { rootMargin: "-45% 0px -50% 0px" }
@@ -215,23 +214,19 @@ const counterObserver = new IntersectionObserver(
 );
 document.querySelectorAll(".stat b").forEach((el) => counterObserver.observe(el));
 
-// restart a CSS animation class even if it is already on the element
-function replayAnimation(el, className) {
-  el.classList.remove(className);
-  void el.offsetWidth;
-  el.classList.add(className);
-}
-
 // ===== projects: category filter + level + live search + sort (all apply together) =====
-const filters = document.getElementById("filters");
-const levels = document.getElementById("levels");
-const levelIntro = document.getElementById("levelIntro");
-const projGrid = document.getElementById("projGrid");
+const filters = $("filters");
+const levels = $("levels");
+const levelIntro = $("levelIntro");
+const projGrid = $("projGrid");
 const projectCards = [...projGrid.querySelectorAll(".pcard")];
-const projEmpty = document.getElementById("projEmpty");
-const projSearch = document.getElementById("projSearch");
-const projSort = document.getElementById("projSort");
-const projCount = document.getElementById("projCount");
+// the card text never changes, so lower-case it once instead of on every keystroke
+const searchText = new Map(projectCards.map((card) => [card, card.textContent.toLowerCase()]));
+const projEmpty = $("projEmpty");
+const projEmptyTerm = $("projEmptyTerm");
+const projSearch = $("projSearch");
+const projSort = $("projSort");
+const projCount = $("projCount");
 let activeCategory = "all";
 let activeLevel = "all";
 
@@ -281,13 +276,14 @@ function setLevel(level) {
 }
 
 function updateProjects() {
-  const term = projSearch.value.trim().toLowerCase();
+  const raw = projSearch.value.trim();
+  const term = raw.toLowerCase();
   let visible = 0;
 
   projectCards.forEach((card) => {
     const inCategory = activeCategory === "all" || card.dataset.category === activeCategory;
     const inLevel = activeLevel === "all" || card.dataset.level === activeLevel;
-    const matches = !term || card.textContent.toLowerCase().includes(term);
+    const matches = !term || searchText.get(card).includes(term);
     const show = inCategory && inLevel && matches;
     if (show && card.hidden) replayAnimation(card, "pop");
     card.hidden = !show;
@@ -298,7 +294,7 @@ function updateProjects() {
     visible === projectCards.length
       ? `Showing all ${visible} projects`
       : `Showing ${visible} of ${projectCards.length} projects`;
-  document.getElementById("projEmptyTerm").textContent = term ? `"${projSearch.value.trim()}"` : "these filters";
+  projEmptyTerm.textContent = raw ? `"${raw}"` : "these filters";
   projEmpty.hidden = visible > 0;
 }
 
@@ -333,7 +329,7 @@ setLevel(store.get("projLevel", "all"));
 sortProjects();
 updateProjects();
 
-document.getElementById("projReset").addEventListener("click", () => {
+$("projReset").addEventListener("click", () => {
   projSearch.value = "";
   setCategory("all");
   setLevel("all");
@@ -342,25 +338,16 @@ document.getElementById("projReset").addEventListener("click", () => {
 });
 
 // ===== collapsible sections (which ones are hidden is saved in localStorage) =====
-function readCollapsed() {
-  try {
-    const list = JSON.parse(store.get("collapsedSections", "[]"));
-    return Array.isArray(list) ? list : [];
-  } catch {
-    return [];
-  }
-}
-
 function setSectionOpen(button, open) {
-  document.getElementById(button.getAttribute("aria-controls")).hidden = !open;
+  $(button.getAttribute("aria-controls")).hidden = !open;
   button.setAttribute("aria-expanded", String(open));
   button.textContent = `${open ? "Hide" : "Show"} ${button.dataset.label}`;
 }
 
-const collapseButtons = document.querySelectorAll(".collapse-btn");
-const collapsed = new Set(readCollapsed());
+const savedCollapsed = store.getJSON("collapsedSections", []);
+const collapsed = new Set(Array.isArray(savedCollapsed) ? savedCollapsed : []);
 
-collapseButtons.forEach((button) => {
+document.querySelectorAll(".collapse-btn").forEach((button) => {
   setSectionOpen(button, !collapsed.has(button.dataset.section));
 
   button.addEventListener("click", () => {
@@ -373,9 +360,9 @@ collapseButtons.forEach((button) => {
 });
 
 // ===== latest public repos from the GitHub API =====
-const ghStatus = document.getElementById("ghStatus");
-const ghList = document.getElementById("ghList");
-const ghRetry = document.getElementById("ghRetry");
+const ghStatus = $("ghStatus");
+const ghList = $("ghList");
+const ghRetry = $("ghRetry");
 
 function setGhStatus(text, type = "") {
   ghStatus.textContent = text;
@@ -417,23 +404,14 @@ const GH_URL = "https://api.github.com/users/quhtani-x/repos?sort=pushed&per_pag
 const GH_CACHE_KEY = "ghRepos";
 const GH_CACHE_MS = 10 * 60 * 1000;
 
+// a missing, damaged or old cache returns null and the repos are fetched again
 function readRepoCache() {
-  try {
-    const cached = JSON.parse(sessionStorage.getItem(GH_CACHE_KEY));
-    if (cached && Array.isArray(cached.repos) && Date.now() - cached.time < GH_CACHE_MS) return cached.repos;
-  } catch {
-    /* missing or damaged cache: fetch again */
-  }
-  return null;
+  const cached = session.getJSON(GH_CACHE_KEY, null);
+  return cached && Array.isArray(cached.repos) && Date.now() - cached.time < GH_CACHE_MS ? cached.repos : null;
 }
 
-function writeRepoCache(repos) {
-  try {
-    sessionStorage.setItem(GH_CACHE_KEY, JSON.stringify({ time: Date.now(), repos }));
-  } catch {
-    /* storage full or blocked: the next load just fetches again */
-  }
-}
+// if storage is full or blocked, the next load simply fetches again
+const writeRepoCache = (repos) => session.set(GH_CACHE_KEY, JSON.stringify({ time: Date.now(), repos }));
 
 async function fetchRepos() {
   const response = await fetch(GH_URL);
@@ -494,11 +472,11 @@ function loadReposOnce() {
 }
 
 ghRetry.addEventListener("click", loadRepos);
-if (!document.getElementById("githubBody").hidden) loadReposOnce();
+if (!$("githubBody").hidden) loadReposOnce();
 
 // ===== contact form validation (front-end only, no backend) =====
-const form = document.getElementById("contactForm");
-const formStatus = document.getElementById("formStatus");
+const form = $("contactForm");
+const formStatus = $("formStatus");
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
 const rules = {
@@ -510,13 +488,13 @@ const rules = {
 function validateField(input) {
   const message = rules[input.id](input.value.trim());
   input.closest(".field").classList.toggle("invalid", Boolean(message));
-  document.getElementById(`${input.id}Error`).textContent = message;
+  $(`${input.id}Error`).textContent = message;
   return !message;
 }
 
 // clear a field's error as soon as the visitor starts fixing it
 Object.keys(rules).forEach((id) => {
-  const input = document.getElementById(id);
+  const input = $(id);
   input.addEventListener("input", () => {
     if (input.closest(".field").classList.contains("invalid")) validateField(input);
   });
@@ -529,7 +507,7 @@ form.addEventListener("submit", (e) => {
   e.preventDefault();
   formStatus.textContent = "";
 
-  const inputs = Object.keys(rules).map((id) => document.getElementById(id));
+  const inputs = Object.keys(rules).map((id) => $(id));
   const invalid = inputs.filter((input) => !validateField(input));
 
   if (invalid.length) {
@@ -538,15 +516,16 @@ form.addEventListener("submit", (e) => {
     return;
   }
 
-  formStatus.textContent = `Thanks, ${document.getElementById("name").value.trim()}! Your message is ready — I'll get back to you soon.`;
+  formStatus.textContent = `Thanks, ${$("name").value.trim()}! Your message is ready — I'll get back to you soon.`;
   replayAnimation(formStatus, "show");
   form.reset();
 });
 
 // ===== visit timer: time on the site this session, kept across reloads in sessionStorage =====
-const visitTimer = document.getElementById("visitTimer");
-const visitStart = Number(sessionStorage.getItem("visitStart")) || Date.now();
-sessionStorage.setItem("visitStart", String(visitStart));
+const visitTimer = $("visitTimer");
+// goes through the safe wrapper: a blocked sessionStorage used to throw here and stop the timer
+const visitStart = Number(session.get("visitStart")) || Date.now();
+session.set("visitStart", String(visitStart));
 
 function updateVisitTimer() {
   const seconds = Math.floor((Date.now() - visitStart) / 1000);
@@ -559,4 +538,4 @@ updateVisitTimer();
 setInterval(updateVisitTimer, 1000);
 
 // ===== footer year =====
-document.getElementById("year").textContent = new Date().getFullYear();
+$("year").textContent = new Date().getFullYear();

@@ -11,7 +11,6 @@
   --muted: #9a9ab0;
   --accent: #7c6cff;
   --accent2: #22d3ee;
-  --accent3: #f472b6;
   --grad: linear-gradient(120deg, #7c6cff, #22d3ee 55%, #f472b6);
   --on-accent: #0a0a12;
   --blob-opacity: 0.5;
@@ -21,7 +20,8 @@
   --focus-ring: 0 0 0 3px rgba(34, 211, 238, 0.35);
   --scrim: rgba(0, 0, 0, 0.55);
 
-  /* shared shape and motion values, the same in both themes */
+  /* shared type, shape and motion values, the same in both themes */
+  --font-head: "Space Grotesk", "Inter", sans-serif;
   --radius-sm: 12px;
   --radius-md: 16px;
   --radius-lg: 20px;
@@ -45,7 +45,6 @@
   --muted: #55556e;
   --accent: #6244ff;
   --accent2: #0e7490;
-  --accent3: #be185d;
   --grad: linear-gradient(120deg, #6244ff, #0891b2 55%, #be185d);
   --on-accent: #ffffff;
   --blob-opacity: 0.22;
@@ -70,7 +69,7 @@ body {
   transition: background-color var(--slow), color var(--slow);
 }
 
-h1, h2, h3, .logo { font-family: "Space Grotesk", "Inter", sans-serif; line-height: 1.15; }
+h1, h2, h3, .logo { font-family: var(--font-head); line-height: 1.15; }
 h1, h2, h3 { text-wrap: balance; }
 a { color: inherit; text-decoration: none; }
 img { display: block; max-width: 100%; }
@@ -79,6 +78,9 @@ ul, ol { list-style: none; }
 ::selection { background: var(--accent); color: #fff; }
 
 :focus-visible { outline: 2px solid var(--accent2); outline-offset: 3px; border-radius: 4px; }
+
+/* these elements set their own display, which would otherwise override the hidden attribute */
+.visitor-saved[hidden], .collapsible-body[hidden], .pcard[hidden], .btn[hidden] { display: none; }
 
 /* gradient text, used by the hero role and the stat numbers */
 .grad, .stat b {
@@ -180,7 +182,7 @@ body::after {
 .hero-inner { display: grid; grid-template-columns: 1.3fr 0.7fr; gap: 50px; align-items: center; }
 .hello { color: var(--accent2); font-weight: 600; letter-spacing: 2px; text-transform: uppercase; font-size: 0.9rem; }
 .hero h1 { font-size: clamp(2.8rem, 7vw, 5.2rem); margin: 6px 0 10px; }
-.roles { font-size: clamp(1.3rem, 3vw, 2.1rem); color: var(--muted); font-weight: 600; font-family: "Space Grotesk", sans-serif; min-height: 1.4em; }
+.roles { font-size: clamp(1.3rem, 3vw, 2.1rem); color: var(--muted); font-weight: 600; font-family: var(--font-head); min-height: 1.4em; }
 .caret { color: var(--accent2); animation: blink 1s step-end infinite; }
 @keyframes blink { 50% { opacity: 0; } }
 .lede { max-width: 560px; color: var(--muted); margin: 22px 0 30px; font-size: 1.08rem; }
@@ -210,7 +212,6 @@ body::after {
 .visitor-row { display: flex; gap: 8px; }
 .visitor-row .btn { padding: 10px 20px; flex-shrink: 0; }
 .visitor-saved { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 16px; color: var(--muted); }
-.visitor-saved[hidden] { display: none; }
 .visitor-saved b { color: var(--text); }
 .link-btn {
   background: none; border: 0; padding: 0; cursor: pointer; font: inherit; font-size: 0.88rem; font-weight: 600;
@@ -231,7 +232,7 @@ body::after {
 /* ---------- stats ---------- */
 .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; padding: 20px 7vw 40px; }
 .stat { border-radius: var(--radius-lg); padding: 26px; text-align: center; }
-.stat b { display: block; font-family: "Space Grotesk", sans-serif; font-size: 2.4rem; }
+.stat b { display: block; font-family: var(--font-head); font-size: 2.4rem; }
 .stat span { color: var(--muted); font-size: 0.9rem; }
 
 /* ---------- section shells ---------- */
@@ -251,7 +252,6 @@ body::after {
 .collapse-btn::after { content: "▴"; content: "▴" / ""; transition: transform var(--fast); }
 .collapse-btn[aria-expanded="false"]::after { transform: rotate(180deg); }
 .collapse-btn:hover { color: var(--text); border-color: var(--accent2); }
-.collapsible-body[hidden] { display: none; }
 
 /* ---------- about ---------- */
 .about-grid { display: grid; grid-template-columns: 0.8fr 1.2fr; gap: 50px; align-items: center; }
@@ -304,7 +304,6 @@ body::after {
   display: flex; flex-direction: column; overflow: hidden; border-radius: var(--radius-lg);
 }
 .pcard:hover { border-color: var(--accent); background: var(--card-hover); }
-.pcard[hidden] { display: none; }
 .pthumb {
   width: 100%; height: auto; aspect-ratio: 8 / 5; object-fit: cover; border-bottom: 1px solid var(--border);
   transition: transform 0.5s var(--ease);
@@ -336,13 +335,12 @@ body::after {
 .gh-status.error { color: var(--danger); }
 .gh-status.loading::after { content: ""; display: inline-block; width: 14px; height: 14px; margin-left: 10px; vertical-align: -2px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
 #ghRetry { margin-top: 14px; }
-#ghRetry[hidden] { display: none; }
 .gh-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 24px; text-align: left; }
 .gh-list a {
   display: flex; flex-direction: column; gap: 8px; height: 100%; padding: 18px 20px; border-radius: var(--radius-md);
 }
 .gh-list a:hover { border-color: var(--accent2); background: var(--card-hover); }
-.gh-list b { font-family: "Space Grotesk", sans-serif; font-size: 1.02rem; word-break: break-word; }
+.gh-list b { font-family: var(--font-head); font-size: 1.02rem; word-break: break-word; }
 .gh-list p { color: var(--muted); font-size: 0.88rem; flex: 1; }
 .gh-meta { display: flex; flex-wrap: wrap; gap: 12px; color: var(--muted); font-size: 0.78rem; }
 @keyframes spin { to { transform: rotate(360deg); } }
@@ -352,7 +350,7 @@ body::after {
 .timeline::before { content: ""; position: absolute; left: 7px; top: 6px; bottom: 6px; width: 2px; background: linear-gradient(var(--accent), var(--accent2), transparent); }
 .tl-item { position: relative; padding: 0 0 34px 26px; }
 .tl-item::before { content: ""; position: absolute; left: -30px; top: 5px; width: 16px; height: 16px; border-radius: 50%; background: var(--bg); border: 3px solid var(--accent); }
-.tl-item .role { font-family: "Space Grotesk", sans-serif; font-weight: 600; font-size: 1.12rem; }
+.tl-item .role { font-family: var(--font-head); font-weight: 600; font-size: 1.12rem; }
 .tl-item .org { color: var(--accent2); font-weight: 500; }
 .tl-item .date { color: var(--muted); font-size: 0.85rem; }
 .tl-item > p:last-child { color: var(--muted); font-size: 0.95rem; margin-top: 6px; }
@@ -381,7 +379,7 @@ body::after {
 }
 .contact-cards a:hover { border-color: var(--accent); background: var(--card-hover); }
 .contact-cards span { font-size: 1.7rem; }
-.contact-cards b { display: block; font-family: "Space Grotesk", sans-serif; margin: 10px 0 4px; }
+.contact-cards b { display: block; font-family: var(--font-head); margin: 10px 0 4px; }
 .contact-cards small { color: var(--muted); word-break: break-word; }
 
 /* ---------- footer ---------- */
@@ -400,13 +398,15 @@ body::after {
 }
 
 /* ---------- scroll reveal ---------- */
-/* an animation rather than a transition, so it does not slow down the cards' own hover transitions */
-.reveal { opacity: 0; }
+/* an animation rather than a transition, so it does not slow down the cards' own hover transitions.
+   Content is only hidden when JavaScript is running (the "js" class is set in <head>), so the page
+   still shows everything if the script fails or is turned off. */
+.js .reveal { opacity: 0; }
 .reveal.in { opacity: 1; animation: reveal 0.7s var(--ease) backwards; }
 @keyframes reveal { from { opacity: 0; transform: translateY(28px); } }
 
 /* ---------- small motion helpers ---------- */
-.pop, .reveal.pop { animation: fade-up 0.35s var(--ease); }
+.reveal.pop { animation: fade-up 0.35s var(--ease); }
 /* each repo card gets its position as --i from the script, so the stagger works for any count */
 .gh-list li { animation: fade-up 0.4s var(--ease) both; animation-delay: calc(var(--i, 0) * 60ms); }
 @keyframes fade-up { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
@@ -423,10 +423,12 @@ body::after {
     -webkit-backdrop-filter: blur(16px);
     backdrop-filter: blur(16px);
     border-left: 1px solid var(--border);
-    transform: translateX(100%); transition: transform 0.35s var(--ease), box-shadow 0.35s;
+    /* visibility waits for the slide-out to finish, then takes the closed links out of the tab order */
+    visibility: hidden; transform: translateX(100%);
+    transition: transform 0.35s var(--ease), box-shadow 0.35s, visibility 0s 0.35s;
   }
   /* the huge shadow dims the page behind the open menu */
-  .nav-links.open { transform: translateX(0); box-shadow: 0 0 0 100vmax var(--scrim); }
+  .nav-links.open { visibility: visible; transform: translateX(0); box-shadow: 0 0 0 100vmax var(--scrim); transition-delay: 0s; }
   /* keep the theme toggle and burger above the open menu panel */
   .nav-actions { position: relative; z-index: 200; }
   .nav-links a { font-size: 1.1rem; }
@@ -464,7 +466,7 @@ body::after {
 /* ---------- accessibility: honour reduced-motion ---------- */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .reveal { opacity: 1; }
+  .js .reveal { opacity: 1; }
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
