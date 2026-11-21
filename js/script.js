@@ -406,17 +406,60 @@ function repoCard(repo) {
   return li;
 }
 
+// a short sessionStorage cache, so reloading the page doesn't spend the 60-requests-an-hour limit
+const GH_URL = "https://api.github.com/users/quhtani-x/repos?sort=pushed&per_page=12";
+const GH_CACHE_KEY = "ghRepos";
+const GH_CACHE_MS = 10 * 60 * 1000;
+
+function readRepoCache() {
+  try {
+    const cached = JSON.parse(sessionStorage.getItem(GH_CACHE_KEY));
+    if (cached && Array.isArray(cached.repos) && Date.now() - cached.time < GH_CACHE_MS) return cached.repos;
+  } catch {
+    /* missing or damaged cache: fetch again */
+  }
+  return null;
+}
+
+function writeRepoCache(repos) {
+  try {
+    sessionStorage.setItem(GH_CACHE_KEY, JSON.stringify({ time: Date.now(), repos }));
+  } catch {
+    /* storage full or blocked: the next load just fetches again */
+  }
+}
+
+async function fetchRepos() {
+  const response = await fetch(GH_URL);
+  if (response.status === 403 || response.status === 429) {
+    throw new Error("GitHub's hourly request limit was reached. Please try again in a few minutes.");
+  }
+  if (!response.ok) throw new Error(`GitHub answered with an error (${response.status}).`);
+
+  const data = await response.json();
+  if (!Array.isArray(data)) throw new Error("GitHub sent an unexpected response.");
+
+  // keep only the fields the cards use, so the cache stays small
+  return data
+    .filter((repo) => !repo.fork)
+    .slice(0, 6)
+    .map(({ name, html_url, description, language, stargazers_count, pushed_at }) => ({
+      name, html_url, description, language, stargazers_count, pushed_at,
+    }));
+}
+
 async function loadRepos() {
   ghRetry.hidden = true;
   ghList.replaceChildren();
   setGhStatus("Loading repositories…", "loading");
 
   try {
-    const response = await fetch("https://api.github.com/users/quhtani-x/repos?sort=pushed&per_page=12");
-    if (response.status === 403) throw new Error("GitHub's hourly request limit was reached. Please try again in a few minutes.");
-    if (!response.ok) throw new Error(`GitHub answered with an error (${response.status}).`);
+    let repos = readRepoCache();
+    if (!repos) {
+      repos = await fetchRepos();
+      writeRepoCache(repos);
+    }
 
-    const repos = (await response.json()).filter((repo) => !repo.fork).slice(0, 6);
     if (!repos.length) {
       setGhStatus("No public repositories to show yet.");
       return;
