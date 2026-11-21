@@ -1,5 +1,33 @@
 /* Portfolio interactions — plain JavaScript, no dependencies. */
 
+// ===== saved state =====
+// localStorage can throw (storage disabled, some private modes), so every read and write goes
+// through this wrapper and the page simply forgets instead of breaking.
+const store = {
+  get(key, fallback = null) {
+    try {
+      const value = localStorage.getItem(key);
+      return value === null ? fallback : value;
+    } catch {
+      return fallback;
+    }
+  },
+  set(key, value) {
+    try {
+      localStorage.setItem(key, value);
+    } catch {
+      /* not saved, nothing else to do */
+    }
+  },
+  remove(key) {
+    try {
+      localStorage.removeItem(key);
+    } catch {
+      /* nothing to remove */
+    }
+  },
+};
+
 // ===== theme toggle (saved in localStorage, falls back to the OS setting) =====
 const root = document.documentElement;
 const themeToggle = document.getElementById("themeToggle");
@@ -13,14 +41,14 @@ function applyTheme(theme) {
   themeToggle.setAttribute("aria-label", isLight ? "Switch to dark theme" : "Switch to light theme");
 }
 
-const savedTheme = localStorage.getItem("theme");
+const savedTheme = store.get("theme");
 const prefersLight = window.matchMedia("(prefers-color-scheme: light)").matches;
 applyTheme(savedTheme || (prefersLight ? "light" : "dark"));
 
 themeToggle.addEventListener("click", () => {
   const next = root.dataset.theme === "light" ? "dark" : "light";
   applyTheme(next);
-  localStorage.setItem("theme", next);
+  store.set("theme", next);
 });
 
 // ===== greeting based on the visitor's local time =====
@@ -185,13 +213,17 @@ function markPressed(group, key, value) {
 }
 
 function setCategory(category) {
+  const known = [...filters.querySelectorAll(".filter")].some((b) => b.dataset.filter === category);
+  if (!known) category = "all";
   activeCategory = category;
+  store.set("projFilter", category);
   markPressed(filters, "filter", category);
 }
 
 function setLevel(level) {
-  if (!levelIntros[level]) level = "all";
+  if (!Object.hasOwn(levelIntros, level)) level = "all";
   activeLevel = level;
+  store.set("projLevel", level);
   markPressed(levels, "level", level);
   levelIntro.textContent = levelIntros[level];
 }
@@ -235,8 +267,18 @@ levels.addEventListener("click", (e) => {
 
 projSearch.addEventListener("input", updateProjects);
 
-projSort.addEventListener("change", sortProjects);
+projSort.addEventListener("change", () => {
+  store.set("projSort", projSort.value);
+  sortProjects();
+});
+
+// restore the last sort, category and level (ignoring anything that is not a valid choice)
+const savedSort = store.get("projSort");
+if (Object.hasOwn(sorters, savedSort)) projSort.value = savedSort;
+setCategory(store.get("projFilter", "all"));
+setLevel(store.get("projLevel", "all"));
 sortProjects();
+updateProjects();
 
 document.getElementById("projReset").addEventListener("click", () => {
   projSearch.value = "";
