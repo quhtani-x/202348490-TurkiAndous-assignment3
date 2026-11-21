@@ -51,10 +51,58 @@ themeToggle.addEventListener("click", () => {
   store.set("theme", next);
 });
 
-// ===== greeting based on the visitor's local time =====
+// ===== greeting: local time of day, plus the visitor's name once they share it =====
+const greetingEl = document.getElementById("greeting");
+const visitorForm = document.getElementById("visitorForm");
+const visitorInput = document.getElementById("visitorName");
+const visitorError = document.getElementById("visitorError");
+const visitorSaved = document.getElementById("visitorSaved");
 const hour = new Date().getHours();
-const greeting = hour < 12 ? "Good morning — I'm" : hour < 18 ? "Good afternoon — I'm" : "Good evening — I'm";
-document.getElementById("greeting").textContent = greeting;
+const timeGreeting = hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
+
+function renderVisitor(justSaved = false) {
+  const name = store.get("visitorName");
+  greetingEl.textContent = name ? `${timeGreeting}, ${name} — I'm` : `${timeGreeting} — I'm`;
+  visitorForm.hidden = Boolean(name);
+  visitorSaved.hidden = !name;
+  if (name) {
+    document.getElementById("visitorShown").textContent = name;
+    document.getElementById("visitorHello").textContent = justSaved ? "Nice to meet you" : "Welcome back";
+  }
+}
+
+visitorForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const name = visitorInput.value.trim().replace(/\s+/g, " ");
+  // at least one letter in any alphabet, so Arabic names work too
+  if (!/\p{L}/u.test(name)) {
+    visitorError.textContent = "Please type a name (up to 40 characters).";
+    replayAnimation(visitorForm, "shake");
+    visitorInput.focus();
+    return;
+  }
+  visitorError.textContent = "";
+  store.set("visitorName", name);
+  renderVisitor(true);
+  document.getElementById("visitorChange").focus();
+});
+
+document.getElementById("visitorChange").addEventListener("click", () => {
+  visitorInput.value = store.get("visitorName", "");
+  visitorSaved.hidden = true;
+  visitorForm.hidden = false;
+  visitorInput.focus();
+  visitorInput.select();
+});
+
+document.getElementById("visitorForget").addEventListener("click", () => {
+  store.remove("visitorName");
+  visitorInput.value = "";
+  renderVisitor();
+  visitorInput.focus();
+});
+
+renderVisitor();
 
 // ===== typed rotating roles in the hero =====
 const roles = ["autonomous systems", "AI that ships", "drone tech", "scalable platforms", "embedded systems"];

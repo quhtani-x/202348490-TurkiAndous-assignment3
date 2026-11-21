@@ -68,6 +68,22 @@
             <li><a href="https://www.linkedin.com/in/turki-andous-alqahtani/" target="_blank" rel="noopener">LinkedIn</a></li>
             <li><a href="mailto:turkiquhtani@gmail.com">Email</a></li>
           </ul>
+
+          <div class="visitor">
+            <form class="visitor-form" id="visitorForm" novalidate>
+              <label for="visitorName">What should I call you?</label>
+              <div class="visitor-row">
+                <input type="text" id="visitorName" maxlength="40" autocomplete="given-name" placeholder="Your first name" aria-describedby="visitorError" />
+                <button class="btn ghost" type="submit">Save</button>
+              </div>
+              <p class="error" id="visitorError" role="alert"></p>
+            </form>
+            <div class="visitor-saved" id="visitorSaved" hidden>
+              <p role="status"><span id="visitorHello">Welcome back</span>, <b id="visitorShown"></b>!</p>
+              <button class="link-btn" type="button" id="visitorChange">Change name</button>
+              <button class="link-btn" type="button" id="visitorForget">Forget me</button>
+            </div>
+          </div>
         </div>
 
         <div class="hero-photo reveal">
