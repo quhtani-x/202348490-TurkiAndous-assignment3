@@ -336,6 +336,37 @@ document.getElementById("projReset").addEventListener("click", () => {
   projSearch.focus();
 });
 
+// ===== collapsible sections (which ones are hidden is saved in localStorage) =====
+function readCollapsed() {
+  try {
+    const list = JSON.parse(store.get("collapsedSections", "[]"));
+    return Array.isArray(list) ? list : [];
+  } catch {
+    return [];
+  }
+}
+
+function setSectionOpen(button, open) {
+  document.getElementById(button.getAttribute("aria-controls")).hidden = !open;
+  button.setAttribute("aria-expanded", String(open));
+  button.textContent = `${open ? "Hide" : "Show"} ${button.dataset.label}`;
+}
+
+const collapseButtons = document.querySelectorAll(".collapse-btn");
+const collapsed = new Set(readCollapsed());
+
+collapseButtons.forEach((button) => {
+  setSectionOpen(button, !collapsed.has(button.dataset.section));
+
+  button.addEventListener("click", () => {
+    const open = button.getAttribute("aria-expanded") !== "true";
+    setSectionOpen(button, open);
+    collapsed[open ? "delete" : "add"](button.dataset.section);
+    store.set("collapsedSections", JSON.stringify([...collapsed]));
+    if (open && button.dataset.section === "github") loadReposOnce();
+  });
+});
+
 // ===== latest public repos from the GitHub API =====
 const ghStatus = document.getElementById("ghStatus");
 const ghList = document.getElementById("ghList");
@@ -405,8 +436,16 @@ async function loadRepos() {
   }
 }
 
+// the request is only made once the section is open, so a collapsed list costs nothing
+let reposRequested = false;
+function loadReposOnce() {
+  if (reposRequested) return;
+  reposRequested = true;
+  loadRepos();
+}
+
 ghRetry.addEventListener("click", loadRepos);
-loadRepos();
+if (!document.getElementById("githubBody").hidden) loadReposOnce();
 
 // ===== contact form validation (front-end only, no backend) =====
 const form = document.getElementById("contactForm");

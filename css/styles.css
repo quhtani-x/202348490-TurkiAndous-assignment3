@@ -236,6 +236,18 @@ body::after {
 .section-title { font-size: clamp(1.8rem, 4vw, 2.8rem); margin: 8px 0; }
 .section-sub { color: var(--muted); max-width: 620px; margin: 8px auto 0; }
 
+/* show/hide buttons for the collapsible sections */
+.section-toggle { text-align: center; margin-top: 10px; }
+.collapse-btn {
+  display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: var(--radius-pill);
+  background: none; border: 1px solid var(--border); color: var(--muted); cursor: pointer;
+  font-family: inherit; font-size: 0.82rem; font-weight: 500; transition: color var(--fast), border-color var(--fast);
+}
+.collapse-btn::after { content: "▴"; content: "▴" / ""; transition: transform var(--fast); }
+.collapse-btn[aria-expanded="false"]::after { transform: rotate(180deg); }
+.collapse-btn:hover { color: var(--text); border-color: var(--accent2); }
+.collapsible-body[hidden] { display: none; }
+
 /* ---------- about ---------- */
 .about-grid { display: grid; grid-template-columns: 0.8fr 1.2fr; gap: 50px; align-items: center; }
 .about-photo { border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--border); aspect-ratio: 4 / 5; background: var(--card); }

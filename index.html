@@ -137,7 +137,8 @@
     <section class="section" id="skills">
       <p class="kicker center">Toolbox</p>
       <h2 class="section-title center">Skills &amp; tech</h2>
-      <div class="skills">
+      <p class="section-toggle"><button class="collapse-btn" type="button" aria-expanded="true" aria-controls="skillsBody" data-section="skills" data-label="skills">Hide skills</button></p>
+      <div class="skills collapsible-body" id="skillsBody">
         <div class="skill-group reveal">
           <h3>Languages</h3>
           <ul class="tags">
@@ -295,9 +296,12 @@
       <div class="gh" id="github">
         <h3 class="gh-title">Latest on GitHub</h3>
         <p class="gh-sub">Pulled live from the GitHub API, most recently updated first.</p>
-        <p class="gh-status" id="ghStatus" role="status" aria-live="polite"></p>
-        <button class="btn ghost" type="button" id="ghRetry" hidden>Try again</button>
-        <ul class="gh-list" id="ghList"></ul>
+        <p class="section-toggle"><button class="collapse-btn" type="button" aria-expanded="true" aria-controls="githubBody" data-section="github" data-label="repositories">Hide repositories</button></p>
+        <div class="collapsible-body" id="githubBody">
+          <p class="gh-status" id="ghStatus" role="status" aria-live="polite"></p>
+          <button class="btn ghost" type="button" id="ghRetry" hidden>Try again</button>
+          <ul class="gh-list" id="ghList"></ul>
+        </div>
       </div>
     </section>
 
@@ -305,7 +309,8 @@
     <section class="section" id="experience">
       <p class="kicker center">Where I've worked</p>
       <h2 class="section-title center">Experience</h2>
-      <ol class="timeline">
+      <p class="section-toggle"><button class="collapse-btn" type="button" aria-expanded="true" aria-controls="experienceBody" data-section="experience" data-label="experience">Hide experience</button></p>
+      <ol class="timeline collapsible-body" id="experienceBody">
         <li class="tl-item reveal">
           <p class="role">AI Engineer</p>
           <p class="org">HUMAIN · <span class="date">Aug 2026 – Present</span></p>
