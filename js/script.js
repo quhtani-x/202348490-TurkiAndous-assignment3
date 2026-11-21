@@ -142,13 +142,28 @@ function replayAnimation(el, className) {
   el.classList.add(className);
 }
 
-// ===== project filter + live search (both apply together) =====
+// ===== project filter + live search + sort (all apply together) =====
 const filters = document.getElementById("filters");
-const projectCards = document.querySelectorAll("#projGrid .pcard");
+const projGrid = document.getElementById("projGrid");
+const projectCards = [...projGrid.querySelectorAll(".pcard")];
 const projEmpty = document.getElementById("projEmpty");
 const projSearch = document.getElementById("projSearch");
+const projSort = document.getElementById("projSort");
 const projCount = document.getElementById("projCount");
 let activeCategory = "all";
+
+// data-date is "YYYY-MM", so plain string comparison already sorts it by time
+const sorters = {
+  newest: (a, b) => b.dataset.date.localeCompare(a.dataset.date),
+  oldest: (a, b) => a.dataset.date.localeCompare(b.dataset.date),
+  az: (a, b) => a.querySelector("h3").textContent.localeCompare(b.querySelector("h3").textContent),
+};
+
+// re-appending moves the existing nodes, so their listeners and state stay intact
+function sortProjects() {
+  const compare = sorters[projSort.value] || sorters.newest;
+  projectCards.slice().sort(compare).forEach((card) => projGrid.append(card));
+}
 
 function setCategory(category) {
   activeCategory = category;
@@ -188,6 +203,9 @@ filters.addEventListener("click", (e) => {
 });
 
 projSearch.addEventListener("input", updateProjects);
+
+projSort.addEventListener("change", sortProjects);
+sortProjects();
 
 document.getElementById("projReset").addEventListener("click", () => {
   projSearch.value = "";

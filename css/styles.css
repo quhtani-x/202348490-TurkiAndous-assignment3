@@ -104,13 +104,13 @@ ul, ol { list-style: none; }
 /* ---------- shared surfaces ---------- */
 /* every card-like box shares one look, so the themes and radii stay consistent */
 .stat, .skill-group, .pcard, .gh-list a, .contact-form, .contact-cards a,
-.icon-btn, .nav-cta, .btn.ghost, .filter, .search input {
+.icon-btn, .nav-cta, .btn.ghost, .filter, .search input, .sort select {
   background: var(--card);
   border: 1px solid var(--border);
 }
 
 /* inputs get a soft ring instead of the default outline, but only from the keyboard or while typing */
-.search input:focus-visible, .field input:focus-visible, .field textarea:focus-visible {
+.search input:focus-visible, .sort select:focus-visible, .field input:focus-visible, .field textarea:focus-visible {
   outline: none; border-color: var(--accent2); box-shadow: var(--focus-ring);
 }
 
@@ -241,7 +241,14 @@ body::after {
 /* ---------- projects ---------- */
 .proj-tools { display: flex; flex-direction: column; align-items: center; gap: 16px; margin: 34px 0 30px; }
 .filters { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
-.search { width: 100%; max-width: 420px; }
+.proj-row { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; align-items: center; width: 100%; }
+.search { flex: 1 1 260px; max-width: 420px; }
+.sort { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: 0.9rem; }
+.sort select {
+  padding: 10px 14px; border-radius: var(--radius-pill); color: var(--text); cursor: pointer;
+  font-family: inherit; font-size: 0.9rem; transition: border-color var(--fast), box-shadow var(--fast);
+}
+.sort select option { background: var(--bg); color: var(--text); }
 .search input {
   width: 100%; padding: 11px 18px; border-radius: var(--radius-pill); color: var(--text);
   font-family: inherit; font-size: 0.95rem; transition: border-color var(--fast), box-shadow var(--fast);
@@ -255,7 +262,8 @@ body::after {
 .filter:hover { color: var(--text); }
 .filter.active { background: var(--grad); color: var(--on-accent); border-color: transparent; }
 
-.proj-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+/* dense flow fills the gap a full-width featured card would leave once sorting moves it */
+.proj-grid { display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-flow: dense; gap: 22px; }
 .pcard {
   display: flex; flex-direction: column; overflow: hidden; border-radius: var(--radius-lg);
   transition: transform var(--slow) var(--ease), border-color var(--slow), background-color var(--slow), box-shadow var(--slow);
