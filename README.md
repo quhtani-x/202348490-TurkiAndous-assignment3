@@ -1,6 +1,6 @@
-# Turki Andous — Portfolio (Assignment 2)
+# Turki Andous — Portfolio (Assignment 3)
 
-SWE363 Assignment 2: Interactive Features.
+SWE363 Assignment 3: Advanced Functionality. (Work in progress — this starts from the Assignment 2 portfolio.)
 
 This is my portfolio from Assignment 1 with more interactivity added on top. It is still plain HTML, CSS and JavaScript with no frameworks, no libraries and no build step.
 
