@@ -35,6 +35,15 @@ My portfolio from Assignment 2 with more advanced features on top: sorting, a le
 
 Lighthouse scores are in the technical documentation.
 
+**Code review and cleanup.** At the end the CSS and JavaScript were reviewed again with AI help (declared in the [AI usage report](docs/ai-usage-report-assignment3.md)), looking for bugs, unused and dead code, and anything that could be lighter without changing how the site looks or behaves:
+- **Fixed:** the page was blank with JavaScript turned off, because the scroll-reveal hid everything until the script showed it. Now content is only hidden when the script is running.
+- **Fixed:** light-theme visitors saw a flash of the dark theme on every load. A tiny script in `<head>` now picks the theme before the first paint.
+- **Fixed:** on phones and tablets, keyboard users could tab into the closed (off-screen) menu. <kbd>Esc</kbd> now also returns focus to the menu button.
+- **Fixed:** the visit timer could crash if `sessionStorage` was blocked. All storage now goes through one safe wrapper.
+- **Fixed:** small glitches — the typing animation showed each finished word twice, the hero started with an empty role, the nav kept "About" highlighted after scrolling back to the top, and the nav background didn't appear when reloading halfway down the page.
+- **Removed:** an unused colour variable, a duplicate animation selector, two separate `try/catch` cache helpers and a `readCollapsed()` helper (replaced by the shared wrapper), and four separate `[hidden]` rules (now one).
+- **Lighter:** the project search lower-cases each card's text once instead of on every keystroke, the mobile menu uses one click listener instead of one per link, and repeated font declarations became a single `--font-head` variable.
+
 ### Still there from Assignments 1 and 2
 
 - dark/light theme toggle: it follows your system setting on the first visit and remembers your choice
@@ -44,6 +53,7 @@ Lighthouse scores are in the technical documentation.
 - stats that count up, sections that fade in on scroll
 - contact form validation with inline errors (front-end only, nothing is sent)
 - a "skip to content" link, visible focus rings, and full support for the "reduce motion" setting
+- the page stays fully readable with JavaScript turned off
 
 ## Running it locally
 
@@ -76,7 +86,8 @@ Open <http://localhost:8000>. There is nothing to install. VS Code's Live Server
 │       ├── profile.jpg
 │       └── projects/      (one SVG per project card)
 └── docs/
-    ├── ai-usage-report.md
+    ├── ai-usage-report.md              (cumulative, all assignments)
+    ├── ai-usage-report-assignment3.md  (Assignment 3 only)
     └── technical-documentation.md
 ```
 
@@ -84,7 +95,7 @@ How each feature works, the saved-state keys, the API error handling and the per
 
 ## AI use
 
-How AI tools were used in this assignment is documented in [`docs/ai-usage-report.md`](docs/ai-usage-report.md).
+How AI tools were used in this assignment is documented in [`docs/ai-usage-report-assignment3.md`](docs/ai-usage-report-assignment3.md). The cumulative report for Assignments 2 and 3 together is [`docs/ai-usage-report.md`](docs/ai-usage-report.md).
 
 ## Deployment
 

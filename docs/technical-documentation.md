@@ -191,8 +191,11 @@ so screen readers are not interrupted every second.
 ### 3.5 Theme toggle (from Assignment 1)
 
 The theme is stored under `theme`. Order of preference: saved choice → OS
-`prefers-color-scheme` → dark. `applyTheme()` sets `<html data-theme>` and keeps
-the button's `aria-pressed` and `aria-label` in sync. The light theme only
+`prefers-color-scheme` → dark. A tiny inline script in `<head>` makes that choice
+before the first paint, so a light-theme visitor never sees a flash of the dark
+theme. It also adds a `js` class to `<html>`, which the scroll-reveal CSS needs
+(section 6). `applyTheme()` in `script.js` keeps `<html data-theme>` and the
+button's `aria-pressed` and `aria-label` in sync. The light theme only
 redefines the CSS colour tokens, so every component works in both themes.
 
 ### 3.6 Contact form validation (from Assignment 1)
@@ -206,9 +209,13 @@ types, and the first invalid field gets focus. Nothing is sent anywhere.
 
 ## 4. Saved state
 
-All `localStorage` access goes through a small `store` wrapper (`get`, `set`,
-`remove`) that catches exceptions. If storage is blocked, for example in some
-private modes, the site just doesn't remember anything, and nothing breaks.
+All storage access goes through one small wrapper factory, `makeStore()`, used
+twice: `store` for `localStorage` and `session` for `sessionStorage`. Each has
+`get`, `set`, `remove` and `getJSON` (which returns a fallback for missing or
+damaged JSON), and all of them catch exceptions. If storage is blocked, for
+example in some private modes, the site just doesn't remember anything, and
+nothing breaks — including the visit timer, which used to call `sessionStorage`
+directly.
 Every value read back is validated before use (`Object.hasOwn` against the known
 options), so an edited or stale value falls back to the default.
 
@@ -254,8 +261,8 @@ most projects because of an old search would be confusing.
 
 `response.ok` is checked explicitly because `fetch` only rejects on network
 failure, not on a 404 or 500. Errors are never cached, so **Try again** always
-makes a fresh request. Reading or writing the cache is wrapped in `try/catch`.
-A damaged cache entry is simply fetched again.
+makes a fresh request. Reading or writing the cache goes through the `session`
+storage wrapper, so a damaged or blocked cache is simply fetched again.
 
 ---
 
@@ -274,6 +281,11 @@ A damaged cache entry is simply fetched again.
   (`content: "▴" / ""`), so it isn't read out.
 - Visible focus rings on all controls. Under `prefers-reduced-motion: reduce`,
   every animation and transition is turned off.
+- The closed mobile menu gets `visibility: hidden` after it slides out, so
+  keyboard users can't tab into links they can't see. <kbd>Esc</kbd> closes the
+  menu and puts focus back on the menu button.
+- Scroll-reveal content is only hidden when JavaScript is running (`.js .reveal`),
+  so the whole page is still readable if the script fails or is turned off.
 - Lighthouse accessibility: 100 (section 7).
 
 ---
