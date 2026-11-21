@@ -260,6 +260,11 @@ body::after {
   font-family: inherit; font-size: 0.9rem; font-weight: 500; transition: color var(--fast), background-color var(--fast);
 }
 .filter:hover { color: var(--text); }
+.filter.small { padding: 6px 14px; font-size: 0.82rem; }
+.levels { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; align-items: center; }
+.levels-label { color: var(--muted); font-size: 0.82rem; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; margin-right: 4px; }
+.level-intro { color: var(--muted); font-size: 0.92rem; text-align: center; max-width: 560px; min-height: 1.6em; }
+.level-intro.show { animation: slide-in 0.35s var(--ease); }
 .filter.active { background: var(--grad); color: var(--on-accent); border-color: transparent; }
 
 /* dense flow fills the gap a full-width featured card would leave once sorting moves it */

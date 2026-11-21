@@ -142,8 +142,10 @@ function replayAnimation(el, className) {
   el.classList.add(className);
 }
 
-// ===== project filter + live search + sort (all apply together) =====
+// ===== projects: category filter + level + live search + sort (all apply together) =====
 const filters = document.getElementById("filters");
+const levels = document.getElementById("levels");
+const levelIntro = document.getElementById("levelIntro");
 const projGrid = document.getElementById("projGrid");
 const projectCards = [...projGrid.querySelectorAll(".pcard")];
 const projEmpty = document.getElementById("projEmpty");
@@ -151,6 +153,14 @@ const projSearch = document.getElementById("projSearch");
 const projSort = document.getElementById("projSort");
 const projCount = document.getElementById("projCount");
 let activeCategory = "all";
+let activeLevel = "all";
+
+const levelIntros = {
+  all: "Everything I've built, from my first full-stack apps to platforms with real users.",
+  beginner: "Where I started: smaller builds that taught me the basics of auth, databases and a clean web UI.",
+  intermediate: "Self-directed projects that go deeper: simulations, swarm behaviour and a renderer written from scratch.",
+  advanced: "Production-level work with real users, real-time control and AI running outside the lab.",
+};
 
 // data-date is "YYYY-MM", so plain string comparison already sorts it by time
 const sorters = {
@@ -165,13 +175,25 @@ function sortProjects() {
   projectCards.slice().sort(compare).forEach((card) => projGrid.append(card));
 }
 
-function setCategory(category) {
-  activeCategory = category;
-  filters.querySelectorAll(".filter").forEach((b) => {
-    const active = b.dataset.filter === category;
+// one helper for both button groups: highlight the chosen button, update aria-pressed
+function markPressed(group, key, value) {
+  group.querySelectorAll(".filter").forEach((b) => {
+    const active = b.dataset[key] === value;
     b.classList.toggle("active", active);
     b.setAttribute("aria-pressed", String(active));
   });
+}
+
+function setCategory(category) {
+  activeCategory = category;
+  markPressed(filters, "filter", category);
+}
+
+function setLevel(level) {
+  if (!levelIntros[level]) level = "all";
+  activeLevel = level;
+  markPressed(levels, "level", level);
+  levelIntro.textContent = levelIntros[level];
 }
 
 function updateProjects() {
@@ -180,8 +202,9 @@ function updateProjects() {
 
   projectCards.forEach((card) => {
     const inCategory = activeCategory === "all" || card.dataset.category === activeCategory;
+    const inLevel = activeLevel === "all" || card.dataset.level === activeLevel;
     const matches = !term || card.textContent.toLowerCase().includes(term);
-    const show = inCategory && matches;
+    const show = inCategory && inLevel && matches;
     if (show && card.hidden) replayAnimation(card, "pop");
     card.hidden = !show;
     if (show) visible++;
@@ -191,7 +214,7 @@ function updateProjects() {
     visible === projectCards.length
       ? `Showing all ${visible} projects`
       : `Showing ${visible} of ${projectCards.length} projects`;
-  document.getElementById("projEmptyTerm").textContent = term ? `"${projSearch.value.trim()}"` : "this filter";
+  document.getElementById("projEmptyTerm").textContent = term ? `"${projSearch.value.trim()}"` : "these filters";
   projEmpty.hidden = visible > 0;
 }
 
@@ -199,6 +222,14 @@ filters.addEventListener("click", (e) => {
   const button = e.target.closest(".filter");
   if (!button) return;
   setCategory(button.dataset.filter);
+  updateProjects();
+});
+
+levels.addEventListener("click", (e) => {
+  const button = e.target.closest(".filter");
+  if (!button) return;
+  setLevel(button.dataset.level);
+  replayAnimation(levelIntro, "show");
   updateProjects();
 });
 
@@ -210,6 +241,7 @@ sortProjects();
 document.getElementById("projReset").addEventListener("click", () => {
   projSearch.value = "";
   setCategory("all");
+  setLevel("all");
   updateProjects();
   projSearch.focus();
 });

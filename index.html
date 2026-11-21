@@ -162,6 +162,14 @@
       <p class="section-sub center">A mix of autonomous-systems engineering and products people use.</p>
 
       <div class="proj-tools">
+        <div class="levels" id="levels" role="group" aria-labelledby="levelsLabel">
+          <span class="levels-label" id="levelsLabel">Level</span>
+          <button class="filter small active" type="button" data-level="all" aria-pressed="true">All</button>
+          <button class="filter small" type="button" data-level="beginner" aria-pressed="false">Beginner</button>
+          <button class="filter small" type="button" data-level="intermediate" aria-pressed="false">Intermediate</button>
+          <button class="filter small" type="button" data-level="advanced" aria-pressed="false">Advanced</button>
+        </div>
+        <p class="level-intro" id="levelIntro" aria-live="polite">Everything I've built, from my first full-stack apps to platforms with real users.</p>
         <div class="filters" id="filters" role="group" aria-label="Filter projects by category">
           <button class="filter active" type="button" data-filter="all" aria-pressed="true">All</button>
           <button class="filter" type="button" data-filter="ai" aria-pressed="false">AI &amp; Autonomy</button>
@@ -185,7 +193,7 @@
       </div>
 
       <div class="proj-grid" id="projGrid">
-        <article class="pcard featured reveal" data-category="web" data-date="2026-09">
+        <article class="pcard featured reveal" data-category="web" data-date="2026-09" data-level="advanced">
           <img class="pthumb" src="assets/images/projects/petroly-aio.svg" alt="Illustration of a campus map with a walking route between buildings" width="800" height="500" loading="lazy" />
           <div class="pbody">
             <p class="ptag">Campus platform · Full-stack · <time datetime="2026-09">Sep 2026</time></p>
@@ -196,7 +204,7 @@
           </div>
         </article>
 
-        <article class="pcard reveal" data-category="ai" data-date="2026-05">
+        <article class="pcard reveal" data-category="ai" data-date="2026-05" data-level="advanced">
           <img class="pthumb" src="assets/images/projects/f1-active-aero.svg" alt="Illustration of an adaptive F1 rear wing" width="800" height="500" loading="lazy" />
           <div class="pbody">
             <p class="ptag">Autonomous · Motorsport · <time datetime="2026-05">May 2026</time></p>
@@ -207,7 +215,7 @@
           </div>
         </article>
 
-        <article class="pcard reveal" data-category="ai" data-date="2026-02">
+        <article class="pcard reveal" data-category="ai" data-date="2026-02" data-level="intermediate">
           <img class="pthumb" src="assets/images/projects/uav-swarm.svg" alt="Illustration of drones flying in formation" width="800" height="500" loading="lazy" />
           <div class="pbody">
             <p class="ptag">Swarm robotics · <time datetime="2026-02">Feb 2026</time></p>
@@ -218,7 +226,7 @@
           </div>
         </article>
 
-        <article class="pcard reveal" data-category="ai" data-date="2025-10">
+        <article class="pcard reveal" data-category="ai" data-date="2025-10" data-level="intermediate">
           <img class="pthumb" src="assets/images/projects/natural-selection.svg" alt="Illustration of a neural network graph" width="800" height="500" loading="lazy" />
           <div class="pbody">
             <p class="ptag">AI · Artificial life · <time datetime="2025-10">Oct 2025</time></p>
@@ -229,7 +237,7 @@
           </div>
         </article>
 
-        <article class="pcard reveal" data-category="web" data-date="2025-02">
+        <article class="pcard reveal" data-category="web" data-date="2025-02" data-level="intermediate">
           <img class="pthumb" src="assets/images/projects/bender-3d.svg" alt="Illustration of a 3D wireframe cube" width="800" height="500" loading="lazy" />
           <div class="pbody">
             <p class="ptag">Graphics · Web · <time datetime="2025-02">Feb 2025</time></p>
@@ -240,7 +248,7 @@
           </div>
         </article>
 
-        <article class="pcard reveal" data-category="web" data-date="2025-05">
+        <article class="pcard reveal" data-category="web" data-date="2025-05" data-level="advanced">
           <img class="pthumb" src="assets/images/projects/thaka-ai.svg" alt="Illustration of a video lecture player" width="800" height="500" loading="lazy" />
           <div class="pbody">
             <p class="ptag">Startup · Full-stack AI · <time datetime="2025-05">May 2025</time></p>
@@ -251,7 +259,7 @@
           </div>
         </article>
 
-        <article class="pcard reveal" data-category="web" data-date="2024-11">
+        <article class="pcard reveal" data-category="web" data-date="2024-11" data-level="beginner">
           <img class="pthumb" src="assets/images/projects/banking-system.svg" alt="Illustration of a bank and transaction chart" width="800" height="500" loading="lazy" />
           <div class="pbody">
             <p class="ptag">Full-stack · Backend · <time datetime="2024-11">Nov 2024</time></p>
