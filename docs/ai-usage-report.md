@@ -1,104 +1,53 @@
 # AI Usage Report
 
-**Assignment 2 — Interactive Features**
+**Assignment 3 — Advanced Functionality**
 **Student:** Turki Andous (s202348490) · **Course:** SWE363, KFUPM
+
+> Fill in every `[placeholder]` below before submitting.
 
 ---
 
-## 1. Tools used
+## 1. Tool used
 
-| Tool | Model | How I used it |
-| --- | --- | --- |
-| Claude Code (Anthropic), a terminal coding assistant that can read and edit the project files | Claude Opus 5.5 | Wrote the first version of all the Assignment 2 code changes and the drafts of the README and technical documentation, and tested the features in a browser |
+| | |
+| --- | --- |
+| **Tool** | [Tool name] |
+| **Provider** | [Company / provider] |
+| **How I accessed it** | [e.g. web chat, IDE extension, terminal assistant] |
 
-I used one tool and one conversation for the whole assignment.
+## 2. Model
 
-## 2. What the AI did
+| | |
+| --- | --- |
+| **Model** | [Model name and version] |
+| **Dates used** | [Start date] – [End date] |
 
-I gave Claude my Assignment 2 repo and asked him to help me with my css and readme,md 
-1 **Added animations.** Fade-in for cards, a shake on invalid form fields, and an
-   animated success message, all disabled under reduced motion (`css/styles.css`,
-   `js/script.js`).
-2. **Updated content.** Added my AIAA Design/Build/Fly role to the experience
-   timeline, from the details I gave it (`index.html`).
-3. **Drafted documentation.** Wrote drafts of `README.md`,
-   `docs/technical-documentation.md` and this report.
-4. **CSS style pass.** On a separate branch
-   (`style/css-refresh`), it reviewed `css/styles.css`, explained eight proposed
-   improvements, and only made them after I approved the plan: shared tokens for
-   radius and timing, one shared card style, visible focus rings on inputs, hover
-   lift only on devices with a mouse, removing both `!important` rules, small
-   layout fixes, hover polish and a dimmed background behind the mobile menu, and
-   a complete reduced-motion rule. It also found and fixed a bug where the
-   scroll-reveal transition made project cards take 0.7s instead of 0.3s to lift
-   on hover. It then updated `README.md`, including fixing a wrong example
-   ("drones" finds nothing, "drone" does).
+## 3. What it was used for
 
-Decisions that came from me, not the AI:
-- Keeping the scope small: three features, no frameworks.
-- Building on Assignment 1 rather than starting over.
-- Adding the DBF role.
-- The README tone: plain and not overly polished.
+- [Task 1 — e.g. which feature or file, and what the tool did]
+- [Task 2]
+- [Task 3]
 
-## 3. How the output was checked
+**What I did myself:** [Parts you wrote, designed or decided without the tool]
 
-The AI ran the site on a local server and tested each feature in a browser before
-committing it:
+**How I checked the output:** [How you reviewed and tested what the tool produced, and what you changed]
 
-- **Search.** Typing "flask" leaves 2 of 7 projects. Adding the AI filter shows
-  the empty state, and the reset button brings all 7 back.
-- **GitHub list.** The normal load shows six repos. Replacing `fetch` with a
-  network error, an HTTP 403 and an empty response each shows the right message.
-- **Animations and form.** Invalid fields shake, and a valid submit shows the
-  animated success message.
+## 4. Usage log
 
-Testing found one real bug: the **Try again** button showed even when nothing had
-failed. The `.btn` style set `display`, which overrode the `hidden` attribute.
-This was fixed with a `#ghRetry[hidden] { display: none; }` rule.
-
-I then tested it myself on multiple devices and in Chrome, Safari and Edge. The
-search, filter, GitHub list, animations and form worked the same in all of them.
-
-## 4. What I changed in the AI output
-
-ive built mostly everything since phase 1 and before that myself for my portfolio but enhanced the wording and animations using AI , i changed some animation timing in the animations he added , also the wordings of my achievemnts as well , mostly styling was proof read by ai , and i changed some colors to match my style.
+| # | Date | What I asked for | What I got | What I kept or changed |
+| --- | --- | --- | --- | --- |
+| 1 | [Date] | [Prompt / request summary] | [Result summary] | [Kept / edited / rejected, and why] |
+| 2 | [Date] | [Prompt / request summary] | [Result summary] | [Kept / edited / rejected, and why] |
+| 3 | [Date] | [Prompt / request summary] | [Result summary] | [Kept / edited / rejected, and why] |
 
 ## 5. What I learned
 
-Three things in this code were new to me. I read up on them on W3Schools until I
-understood them, and they were an eye opener:
+[A few sentences on what you learned from the assignment and from working with the tool]
 
-- **`response.ok`.** `fetch` only fails by itself when the network is down. If
-  GitHub answers with an error like 403 or 500, the request still "succeeds", so
-  the code has to check `response.ok` and throw an error itself. Otherwise the
-  error message would never show.
-- **`textContent` vs `innerHTML`.** `innerHTML` treats text as HTML, so if a repo
-  description contained a tag or a script, it would run on my page. `textContent`
-  always puts it in as plain text, which is why the repo cards are built that way.
-- **Search and filter in sync.** Both the category buttons and the search box
-  call the same `updateProjects()` function. A card shows only if it is in the
-  active category and contains the search text, so the two can never disagree.
+## 6. Declaration
 
-## 6. Usage log
+I declare that the use of AI tools in this assignment is fully and honestly described above. I reviewed, tested and understand all of the submitted work, and I take responsibility for it.
 
-| ID | Tool (model) | Date | Purpose | Files affected | What I changed and how I verified it |
-| --- | --- | --- | --- | --- | --- |
-1- Claude Opus 5.5 , 10-25-2206 | readme.md | i read everything he wrote and changed some things and features he said the web app had but i didnt implement it yet, i asked him to check my previous readmd.md and write me a similar one based on this assignemnt , and he did write it , but added some parts that were not true, as i checked back the code ad actaully verified that he made my site better by lying in the readmd.
-
-2- claude Opus 5.5 , 10-25-2026  | CSS file | i reviwed all the colors and anmiations he made , and changed them based on my prefernces. and made sure that what i changed was actually reflected in the site by testing it.  
-
-3- Claude Opus 5.5 (Claude Code) , 10-25-2026 | `css/styles.css`, `README.md`, `docs/ai-usage-report.md` | Asked it to improve my CSS on a new branch and update my outdated README. It explained the 8 changes first and only edited the files after I approved. It tested the result in a browser at desktop and phone sizes, in dark and light themes (hover, focus rings, mobile menu, search and filter). It also added this entry and item 7 in section 2. The changes are in commits on the `style/css-refresh` branch so I can review them before merging.
-
-
-
-## 7. Declaration
-
-> I declare that this report and the attached evidence document all of my AI use
-> in this assignment, with complete and unedited conversations, and that I
-> understand and can explain all the code I submitted. I understand that
-> undeclared AI use or a false declaration will be treated as plagiarism
-> according to KFUPM regulations.
-
-**Name:** Turki Andous
-**Student ID:** s202348490
-**Date:** 2026-10-25
+**Name:** [Full name]
+**Student ID:** [Student ID]
+**Date:** [Date]
